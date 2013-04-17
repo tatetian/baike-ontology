@@ -68,6 +68,7 @@ public class BaikeOntology {
     while(iterRootClass.hasNext()) {
       OntClass rootClass = iterRootClass.next();
       BaikeUtil.log("-------Class " + rootClass.getURI() + ": <" + rootClassURI + ">-------");
+      BaikeUtil.logMemory();
       // Count subclasses
       int countSubclasses = 0;
       ExtendedIterator<OntClass> iterSubclass = rootClass.listSubClasses(false);
@@ -76,6 +77,7 @@ public class BaikeOntology {
         countSubclasses ++;
       } 
       BaikeUtil.log("# of subclasses = " + countSubclasses);
+      BaikeUtil.logMemory();
       // Count instances
       int countInstances = 0;
       int resourceProperties = 0, literalProperties = 0;
@@ -92,6 +94,7 @@ public class BaikeOntology {
           else if(object.isResource()) resourceProperties ++;
         }
       }
+      BaikeUtil.logMemory();
       BaikeUtil.log("# of instances = " + countInstances);
       BaikeUtil.log("# of datatype properties = " + literalProperties);
       BaikeUtil.log("# of object properties = " + countInstances);
