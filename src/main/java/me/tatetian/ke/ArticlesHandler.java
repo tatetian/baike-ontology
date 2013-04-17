@@ -23,7 +23,8 @@ public class ArticlesHandler extends Handler {
     countLines ++;
     if(countLines % 10000 == 0) {
       float remaining = 100 - (float)100.0 * countLines / 20700000;
-      System.out.println("Processed " + countLines + " lines(" + remaining + "% remaining)");
+      BaikeUtil.logMemory();
+      BaikeUtil.log("Processed " + countLines + " lines(" + remaining + "%% remaining)");
     }
 
     // Empty line indicates the beginning of a new article 

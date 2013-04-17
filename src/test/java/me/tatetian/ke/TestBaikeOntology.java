@@ -1,24 +1,35 @@
 package me.tatetian.ke;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
 public class TestBaikeOntology extends junit.framework.TestCase {
   private final String categoriesFile = "data/baidu-taxonomy.dat";
-  private final String articlesFile   = "data/baidu-article.dat";
+  private final String articlesFile   = "data/baidu-article.dat.50000";
   
 	public void test() throws IOException {
-    // Get current size of heap in bytes
-    long heapSize = Runtime.getRuntime().totalMemory(); 
-    // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
-    long heapMaxSize = Runtime.getRuntime().maxMemory();
-    // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
-    long heapFreeSize = Runtime.getRuntime().freeMemory(); 
-    System.out.format("heapSize = %d, heapMaxSize = %d, heapFreeSize = %d", heapSize, heapMaxSize, heapFreeSize);
-
 		BaikeOntology bo = new BaikeOntology(categoriesFile, articlesFile);
-    System.out.println("Processing...");
+		BaikeUtil.logMemory();
+    BaikeUtil.log("Processing...");
 		bo.process();
-    System.out.println("Printing statistics...");
+		
+		System.out.println();
+		
+		BaikeUtil.logMemory();
+    BaikeUtil.log("Printing statistics...");
 		bo.print();
+		
+		System.out.println();
+		
+		BaikeUtil.logMemory();
+    BaikeUtil.log("Do more statistics...");
+    BaikeStatistics bs = new BaikeStatistics(bo.getModel());
+    String[] rootCategories = bs.getRootCategories();
+    BaikeUtil.log("Root categories = %s", Arrays.toString(rootCategories));
+    Map<String, Integer> countSubCategories = bs.countSubCategories();
+    BaikeUtil.log("# of categories in each root category = %s", countSubCategories.toString());
+    int total = bs.countArticles();
+    BaikeUtil.log("# of articles in model = %d", total);
 	}
 }

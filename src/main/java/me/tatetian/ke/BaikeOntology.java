@@ -40,6 +40,10 @@ public class BaikeOntology {
     this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
   }
   
+  public OntModel getModel() {
+    return model;
+  }
+  
   public void process() throws IOException {
     BaikeUtil.loadCategoriesFile(model, categoriesFile);
     BaikeUtil.loadArticlesFile(model, articlesFile);
@@ -63,7 +67,7 @@ public class BaikeOntology {
     int rootClassIndex = 1;
     while(iterRootClass.hasNext()) {
       OntClass rootClass = iterRootClass.next();
-      System.out.println("-------Class " + rootClass.getURI() + ": <" + rootClassURI + ">-------");
+      BaikeUtil.log("-------Class " + rootClass.getURI() + ": <" + rootClassURI + ">-------");
       // Count subclasses
       int countSubclasses = 0;
       ExtendedIterator<OntClass> iterSubclass = rootClass.listSubClasses(false);
@@ -71,7 +75,7 @@ public class BaikeOntology {
         iterSubclass.next();
         countSubclasses ++;
       } 
-      System.out.println("# of subclasses = " + countSubclasses);
+      BaikeUtil.log("# of subclasses = " + countSubclasses);
       // Count instances
       int countInstances = 0;
       int resourceProperties = 0, literalProperties = 0;
@@ -88,13 +92,13 @@ public class BaikeOntology {
           else if(object.isResource()) resourceProperties ++;
         }
       }
-      System.out.println("# of instances = " + countInstances);
-      System.out.println("# of datatype properties = " + literalProperties);
-      System.out.println("# of object properties = " + countInstances);
-      //System.out.println(x)
+      BaikeUtil.log("# of instances = " + countInstances);
+      BaikeUtil.log("# of datatype properties = " + literalProperties);
+      BaikeUtil.log("# of object properties = " + countInstances);
+      //BaikeUtil.log(x)
 //    while (objectProperties.hasNext()) {
 //      ObjectProperty objectProperty = objectProperties.next();
-//      System.out.println(objectProperty.getURI());
+//      BaikeUtil.log(objectProperty.getURI());
 //    }
 //      StmtIterator iterStatement = rootClass.listProperties();
 //      int resourceProperties = 0, literalProperties = 0;
@@ -107,56 +111,59 @@ public class BaikeOntology {
       
       rootClassIndex ++;
     }
+    
+    System.out.println();
+    
     // TODO: is this what we want?
     // Count object properties
     int countObjectProperties = 0;
     Iterator<ObjectProperty> iterObjectProperty = model.listObjectProperties();
     while(iterObjectProperty.hasNext()) {
       ObjectProperty property = iterObjectProperty.next();
-      System.out.println(property);
+      BaikeUtil.log(property.toString());
       countObjectProperties ++;
     }
-    System.out.println("# of object properties in model = " + countObjectProperties);
+    BaikeUtil.log("# of object properties in model = " + countObjectProperties);
     // TODO: is this what we want?
     // Count datatype properties
     int countDatatypeProperties = 0;
     Iterator<DatatypeProperty> iterDatatypeProperty = model.listDatatypeProperties();
     while(iterDatatypeProperty.hasNext()) {
       DatatypeProperty property = iterDatatypeProperty.next();
-      System.out.println(property);
+      BaikeUtil.log(property.toString());
       countDatatypeProperties ++;
     }
-    System.out.println("# of datatype properties in model = " + countDatatypeProperties);
+    BaikeUtil.log("# of datatype properties in model = " + countDatatypeProperties);
     
     
 //    Iterator<OntClass> ontClasses = model.listHierarchyRootClasses();
 //    while (ontClasses.hasNext()) {
 //      OntClass ontClass = ontClasses.next();
-//      System.out.println("-----" + ontClass.getURI() + "-----");
+//      BaikeUtil.log("-----" + ontClass.getURI() + "-----");
 //      
 //    }
 //
-//    System.out.println("\n------ List Individuals ------");
+//    BaikeUtil.log("\n------ List Individuals ------");
 //    Iterator<Individual> individuals = model.listIndividuals();
 //    while (individuals.hasNext()) {
 //      Individual individual = individuals.next();
-//      System.out.println(individual.getURI());
+//      BaikeUtil.log(individual.getURI());
 //    }
 //
-//    System.out.println("\n------ List ObjectProperties ------");
+//    BaikeUtil.log("\n------ List ObjectProperties ------");
 //    Iterator<ObjectProperty> objectProperties = model
 //        .listObjectProperties();
 //    while (objectProperties.hasNext()) {
 //      ObjectProperty objectProperty = objectProperties.next();
-//      System.out.println(objectProperty.getURI());
+//      BaikeUtil.log(objectProperty.getURI());
 //    }
 //
-//    System.out.println("\n------ List DatatypeProperties ------");
+//    BaikeUtil.log("\n------ List DatatypeProperties ------");
 //    Iterator<DatatypeProperty> datatypeProperties = model
 //        .listDatatypeProperties();
 //    while (datatypeProperties.hasNext()) {
 //      DatatypeProperty datatypeProperty = datatypeProperties.next();
-//      System.out.println(datatypeProperty.getURI());
+//      BaikeUtil.log(datatypeProperty.getURI());
 //    }
   }
 }

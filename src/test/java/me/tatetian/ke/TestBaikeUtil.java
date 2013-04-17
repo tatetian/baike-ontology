@@ -8,6 +8,11 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class TestBaikeUtil extends junit.framework.TestCase {
+  public void testLog() {
+    BaikeUtil.logMemory();
+    BaikeUtil.log("100%%");
+  }
+  
   public void testLoadCategoriesFile() throws IOException {
     // Init model
     OntModel model= ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);

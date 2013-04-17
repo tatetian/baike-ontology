@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Calendar;
+import java.util.Date;
 
 import com.hp.hpl.jena.ontology.OntModel;
 
@@ -13,9 +15,30 @@ public class BaikeUtil {
   public static final String CATEGORIES_FILE = "data/baidu-taxonomy.dat";
   public static final String ARTICLES_FILE_SMALL = "data/baidu-article.dat.1000";
   public static final String ARTICLES_FILE = "data/baidu-article.dat";
-
+  
+  public static void log(String format, Object ... args) {
+    printTimestamp();
+    System.out.format(format+"\n", args);
+  }
+  
+  public static void logMemory() {
+    float gigabytes = 1024 * 1024 * 1024;
+    // Get current size of heap in bytes
+    float heapSize = Runtime.getRuntime().totalMemory() / gigabytes; 
+    // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+    float heapMaxSize = Runtime.getRuntime().maxMemory() / gigabytes;
+    // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+    float heapFreeSize = Runtime.getRuntime().freeMemory() / gigabytes; 
+    log("HEAP => free = %.1fGB, size = %.1fGB, max = %.1fGB", heapFreeSize, heapSize, heapMaxSize);
+  }
+  
+  private static void printTimestamp() {
+    Calendar c = Calendar.getInstance();
+    System.out.format("[%1$tH:%1$tM:%1$tS] ", c);
+  }
+  
   public static void loadCategoriesFile(OntModel model, String categoriesFile) throws IOException {
-    System.out.println("Loading categories file...");
+    log("Loading categories file...");
     // Init handler
     CategoriesHandler ch = new CategoriesHandler(model);
     // Process file
@@ -39,7 +62,7 @@ public class BaikeUtil {
   }
   
   public static void loadArticlesFile(OntModel model, String articlesFile) throws IOException {
-    System.out.println("Loading articles...");
+    log("Loading articles...");
     // Init handler
     ArticlesHandler ah = new ArticlesHandler(model);
     // Process file
