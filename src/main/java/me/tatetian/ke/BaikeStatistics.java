@@ -83,8 +83,6 @@ public class BaikeStatistics {
       int count = countLtr.getInt();
       res.put(subClassURI, count);
     }
-    System.out.println(res.toString());
-    
     return res;
   }
   
