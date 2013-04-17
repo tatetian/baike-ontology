@@ -30,3 +30,6 @@ The main program, which reads data file, constructs the ontology and prints
 the statistics, is written as a unit test. To run it, use the following command
 
   mvn -Dtest=BaikeOntology test 
+
+
+

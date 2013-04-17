@@ -34,6 +34,7 @@ public class BaikeStatistics {
     String queryString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
         "SELECT ?subClass " +
         "WHERE { ?subClass  rdfs:subClassOf  " + ROOT_CLASS +" }" ;
+    System.out.println(queryString);
     Query query = QueryFactory.create(queryString) ;
     QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
     ResultSet results = qexec.execSelect() ;
@@ -70,6 +71,7 @@ public class BaikeStatistics {
                  "FILTER (?x != ?sub0 && ?x != " + ROOT_CLASS + " ) } " +
                "} " +
                "GROUP BY ?sub0";
+    System.out.println(queryString);
     Query query = QueryFactory.create(queryString) ;
     QueryExecution qexec = QueryExecutionFactory.create(query, inf) ;
     ResultSet results = qexec.execSelect() ;
@@ -92,6 +94,7 @@ public class BaikeStatistics {
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
         "SELECT (COUNT(?article) AS ?count) " +
         "WHERE { ?article rdf:type " + ROOT_CLASS + " }";
+    System.out.println(queryString);
     Query query = QueryFactory.create(queryString) ;
     QueryExecution qexec = QueryExecutionFactory.create(query, inf) ;
     ResultSet results = qexec.execSelect() ;

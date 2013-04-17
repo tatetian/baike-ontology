@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TestBaikeOntology extends junit.framework.TestCase {
   private final String categoriesFile = "data/baidu-taxonomy.dat";
-  private final String articlesFile   = "data/baidu-article.dat.50000";
+  private final String articlesFile   = "data/baidu-article.dat.1000";
   
 	public void test() throws IOException {
 		BaikeOntology bo = new BaikeOntology(categoriesFile, articlesFile);
