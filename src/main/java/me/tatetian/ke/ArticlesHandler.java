@@ -7,6 +7,7 @@ import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Bag;
 
 public class ArticlesHandler extends Handler {
+  private int countLines = 0;
   private String currentArticleURI = null;
   private OntResource currentArticle = null;
   private PropertyHelper propertyHelper = null;
@@ -19,6 +20,12 @@ public class ArticlesHandler extends Handler {
   
   @Override
   public void handleLine(String line) {
+    countLines ++;
+    if(countLines % 10000 == 0) {
+      float remaining = 100 - (float)100.0 * countLines / 20700000;
+      System.out.println("Processed " + countLines + " lines(" + remaining + "% remaining)");
+    }
+
     // Empty line indicates the beginning of a new article 
     line = line.trim();
     if(line.length() == 0) {

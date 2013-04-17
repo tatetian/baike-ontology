@@ -15,6 +15,7 @@ public class BaikeUtil {
   public static final String ARTICLES_FILE = "data/baidu-article.dat";
 
   public static void loadCategoriesFile(OntModel model, String categoriesFile) throws IOException {
+    System.out.println("Loading categories file...");
     // Init handler
     CategoriesHandler ch = new CategoriesHandler(model);
     // Process file
@@ -38,6 +39,7 @@ public class BaikeUtil {
   }
   
   public static void loadArticlesFile(OntModel model, String articlesFile) throws IOException {
+    System.out.println("Loading articles...");
     // Init handler
     ArticlesHandler ah = new ArticlesHandler(model);
     // Process file
