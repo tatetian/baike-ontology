@@ -69,9 +69,9 @@ public class BaikeUtil {
     processLines(articlesFile, ah);
     
     // Debug
-    FileOutputStream fout = new FileOutputStream("output.txt");
-    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fout));
-    model.write(out, "RDF/XML");
+//    FileOutputStream fout = new FileOutputStream("output.txt");
+//    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fout));
+//    model.write(out, "RDF/XML");
   }
   
   private static void processLines(String file, Handler handler) throws IOException {
