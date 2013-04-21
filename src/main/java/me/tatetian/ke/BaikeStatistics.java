@@ -98,8 +98,7 @@ public class BaikeStatistics {
         "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
         "SELECT (COUNT(DISTINCT ?article) AS ?count) " +
-        "WHERE { ?article rdf:type ?sub ." +
-                "?sub rdfs:subClassOf " + categoryURI + " }";
+        "WHERE { ?article rdf:type " + categoryURI + " }";
     Query query = QueryFactory.create(queryString) ;
     QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
     ResultSet results = qexec.execSelect() ;
@@ -149,8 +148,7 @@ public class BaikeStatistics {
           "} . " +
           "{" +
               "SELECT DISTINCT ?article " +
-              "WHERE { ?article rdf:type ?sub . " +
-                       "?sub rdfs:subClassOf " + categoryURI + "} " +
+              "WHERE { ?article rdf:type " + categoryURI + " } " +
           "}" + 
         "}";
 
@@ -179,8 +177,7 @@ public class BaikeStatistics {
           "} . " +
           "{" +
               "SELECT DISTINCT ?article " +
-              "WHERE { ?article rdf:type ?sub . " +
-                       "?sub rdfs:subClassOf " + categoryURI + "} " +
+              "WHERE { ?article rdf:type " + categoryURI + "} " +
           "}" + 
         "}";
 //                "{ " +
