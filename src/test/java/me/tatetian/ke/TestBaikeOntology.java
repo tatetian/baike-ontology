@@ -1,6 +1,9 @@
 package me.tatetian.ke;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -31,5 +34,9 @@ public class TestBaikeOntology extends junit.framework.TestCase {
     BaikeUtil.log("# of categories in each root category = %s", countSubCategories.toString());
     int total = bs.countArticles();
     BaikeUtil.log("# of articles in model = %d", total);
+    
+//    FileOutputStream fout = new FileOutputStream("output.txt");
+//    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(fout));
+//    bo.getModel().write(out, "RDF/XML");
 	}
 }

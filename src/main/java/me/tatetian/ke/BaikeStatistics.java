@@ -97,8 +97,98 @@ public class BaikeStatistics {
     String queryString = 
         "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
-        "SELECT (COUNT(?article) AS ?count) " +
-        "WHERE { ?article rdf:type " + categoryURI + " }";
+        "SELECT (COUNT(DISTINCT ?article) AS ?count) " +
+        "WHERE { ?article rdf:type ?sub ." +
+                "?sub rdfs:subClassOf " + categoryURI + " }";
+    Query query = QueryFactory.create(queryString) ;
+    QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
+    ResultSet results = qexec.execSelect() ;
+    int count = -1;
+    for ( ; results.hasNext() ; )
+    {
+      QuerySolution soln = results.nextSolution();
+      Literal countLtr   = soln.getLiteral("count");
+      count = countLtr.getInt();
+    }
+    return count;
+  }
+  
+  public static int countSubClasses(Model model, String categoryURI) {
+    String queryString = 
+        "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
+        "SELECT (COUNT(DISTINCT ?sub) AS ?count) " +
+        "WHERE { ?sub   rdfs:subClassOf  "+ categoryURI + " . " + 
+        "FILTER ( ?sub != " + categoryURI + " ) }";
+    Query query = QueryFactory.create(queryString) ;
+    QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
+    ResultSet results = qexec.execSelect() ;
+    Map<String, Integer> res = new HashMap<String, Integer>();
+    int count = 0;
+    for ( ; results.hasNext() ; )
+    {
+      QuerySolution soln = results.nextSolution();
+      Literal countLtr   = soln.getLiteral("count");
+      count = countLtr.getInt();
+    }
+    return count;
+  } 
+  
+  public static int countObjectProperties(Model model, String categoryURI) {
+    String queryString = 
+        "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+        "PREFIX j.1: <http://tatetian.me/baike/properties/> " +
+        "SELECT (COUNT(?object) AS ?count) " +
+        "WHERE { " +
+          "{" +
+            "{ ?article j.1:hasInfo  ?object } UNION " +
+            "{ ?article j.1:hasSynonyms ?object } UNION " +
+            "{ ?article j.1:hasLinks ?object } UNION " +
+            "{ ?article j.1:hasRelatedEntities ?object } " +
+          "} . " +
+          "{" +
+              "SELECT DISTINCT ?article " +
+              "WHERE { ?article rdf:type ?sub . " +
+                       "?sub rdfs:subClassOf " + categoryURI + "} " +
+          "}" + 
+        "}";
+
+    Query query = QueryFactory.create(queryString) ;
+    QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
+    ResultSet results = qexec.execSelect() ;
+    int count = -1;
+    for ( ; results.hasNext() ; )
+    {
+      QuerySolution soln = results.nextSolution();
+      Literal countLtr   = soln.getLiteral("count");
+      count = countLtr.getInt();
+    }
+    return count;
+  }
+  
+  public static int countDatatypeProperties(Model model, String categoryURI) {
+    String queryString = 
+        "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+        "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
+        "SELECT (COUNT(?literal) AS ?count) " +
+        "WHERE {" +
+          "{ " +
+            "{ ?article rdfs:comment ?literal } UNION " +
+            "{ ?article rdfs:label ?literal } " +
+          "} . " +
+          "{" +
+              "SELECT DISTINCT ?article " +
+              "WHERE { ?article rdf:type ?sub . " +
+                       "?sub rdfs:subClassOf " + categoryURI + "} " +
+          "}" + 
+        "}";
+//                "{ " +
+//                  "{ ?article j.1:hasInfo  ?object } UNION " +
+//                  "{ ?article j.1:hasSynonyms ?object } UNION " +
+//                  "{ ?article j.1:hasLinks ?object } UNION " +
+//                  "{ ?article j.1:hasRelatedEntities ?object } " +
+//                "} }";
     Query query = QueryFactory.create(queryString) ;
     QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
     ResultSet results = qexec.execSelect() ;

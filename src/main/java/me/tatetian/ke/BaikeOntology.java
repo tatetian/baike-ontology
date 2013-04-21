@@ -21,6 +21,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -65,9 +66,12 @@ public class BaikeOntology {
     private int currentClassIndex;
     
     private Model model;
+    private InfModel inf;
     
     public Statistics(Model model) {
       this.model = model;
+      Reasoner reasoner = ReasonerRegistry.getRDFSSimpleReasoner(); 
+      this.inf   = ModelFactory.createInfModel(reasoner, model);
     }
     
     public void visitRoot(OntClass _rootClass) {
@@ -79,9 +83,7 @@ public class BaikeOntology {
         rootClasses.add(rootClass);
       }
       // Get root names
-      
       int numRootClasses = rootClasses.size();
-      System.out.println(numRootClasses);
       rootClassURIs = new String[numRootClasses];
       countSubClasses = new int[numRootClasses];
       countInstances = new int[numRootClasses];
@@ -89,30 +91,44 @@ public class BaikeOntology {
       countDatatypeProperties = new int[numRootClasses];
       for(int i = 0; i < rootClassURIs.length; i++)
         rootClassURIs[i] = rootClasses.get(i).getURI();
-      System.out.println("Root categories: " + Arrays.toString(rootClassURIs));
+      BaikeUtil.log("Root categories: " + Arrays.toString(rootClassURIs));
       // Statistics of each root
       for(currentClassIndex = 0; currentClassIndex < numRootClasses; currentClassIndex++) {
         System.out.println("===========================================================");
-        System.out.println("Visiting root category: " + rootClassURIs[currentClassIndex] + "...");
-        visit(rootClasses.get(currentClassIndex));
-        System.out.println("# of subcategories = " + countSubClasses[currentClassIndex]);
-        System.out.println("# of instances = " + countInstances[currentClassIndex]);
+        BaikeUtil.log("Visiting root category: " + rootClassURIs[currentClassIndex] + "...");
+        visit2(rootClasses.get(currentClassIndex));
+        BaikeUtil.log("# of subcategories = " + countSubClasses[currentClassIndex]);
+        BaikeUtil.log("# of instances = " + countInstances[currentClassIndex]);
+        BaikeUtil.log("# of object properties = " + countObjectProperties[currentClassIndex]);
+        BaikeUtil.log("# of datatype properties = " + countDatatypeProperties[currentClassIndex]);
       }
     }
     
+    private void visit2(OntClass rootClass) {
+      String categoryURI = "<" + rootClass.getURI() + ">";
+      countSubClasses[currentClassIndex] = BaikeStatistics.countSubClasses(inf, categoryURI);
+      countInstances[currentClassIndex] = BaikeStatistics.countArticles(inf, categoryURI);
+      countDatatypeProperties[currentClassIndex] = BaikeStatistics.countDatatypeProperties(inf, categoryURI);
+      countObjectProperties[currentClassIndex] = BaikeStatistics.countObjectProperties(inf, categoryURI);
+    }
+    
     private void visit(OntClass subClass) {
-      // Increase counter
-      countSubClasses[currentClassIndex] ++;
       // If non-leaf class
       if(subClass.hasSubClass()) {
         ExtendedIterator<OntClass> iterRootClass = subClass.listSubClasses();
         while(iterRootClass.hasNext()) {
+          // Increase counter
+          countSubClasses[currentClassIndex] ++;
+          // Visit sub classes
           OntClass subSubClass = iterRootClass.next();
           visit(subSubClass);
         }
       }
       // If leaf class
       else {
+        // Increase subclass counter
+        countSubClasses[currentClassIndex] ++;
+        // Increase instances counter
         countInstances[currentClassIndex] += BaikeStatistics.countArticles(model, "<" + subClass.getURI() + ">");
       }
     }
