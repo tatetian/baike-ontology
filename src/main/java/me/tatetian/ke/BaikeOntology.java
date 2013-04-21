@@ -70,7 +70,7 @@ public class BaikeOntology {
     
     public Statistics(Model model) {
       this.model = model;
-      Reasoner reasoner = ReasonerRegistry.getRDFSSimpleReasoner(); 
+      Reasoner reasoner = ReasonerRegistry.getTransitiveReasoner();
       this.inf   = ModelFactory.createInfModel(reasoner, model);
     }
     
