@@ -7,7 +7,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
@@ -16,6 +21,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -47,6 +53,79 @@ public class BaikeOntology {
   public void process() throws IOException {
     BaikeUtil.loadCategoriesFile(model, categoriesFile);
     BaikeUtil.loadArticlesFile(model, articlesFile);
+  }
+  
+  
+  public static class Statistics {
+    private String[] rootClassURIs;
+    private int[] countSubClasses;
+    private int[] countInstances;
+    private int[] countObjectProperties;
+    private int[] countDatatypeProperties;
+    private int currentClassIndex;
+    
+    private Model model;
+    
+    public Statistics(Model model) {
+      this.model = model;
+    }
+    
+    public void visitRoot(OntClass _rootClass) {
+      // Get root classes
+      List<OntClass> rootClasses = new ArrayList<OntClass>();
+      ExtendedIterator<OntClass> iterRootClass = _rootClass.listSubClasses();
+      while(iterRootClass.hasNext()) {
+        OntClass rootClass = iterRootClass.next();
+        rootClasses.add(rootClass);
+      }
+      // Get root names
+      
+      int numRootClasses = rootClasses.size();
+      System.out.println(numRootClasses);
+      rootClassURIs = new String[numRootClasses];
+      countSubClasses = new int[numRootClasses];
+      countInstances = new int[numRootClasses];
+      countObjectProperties = new int[numRootClasses];
+      countDatatypeProperties = new int[numRootClasses];
+      for(int i = 0; i < rootClassURIs.length; i++)
+        rootClassURIs[i] = rootClasses.get(i).getURI();
+      System.out.println("Root categories: " + Arrays.toString(rootClassURIs));
+      // Statistics of each root
+      for(currentClassIndex = 0; currentClassIndex < numRootClasses; currentClassIndex++) {
+        System.out.println("===========================================================");
+        System.out.println("Visiting root category: " + rootClassURIs[currentClassIndex] + "...");
+        visit(rootClasses.get(currentClassIndex));
+        System.out.println("# of subcategories = " + countSubClasses[currentClassIndex]);
+        System.out.println("# of instances = " + countInstances[currentClassIndex]);
+      }
+    }
+    
+    private void visit(OntClass subClass) {
+      // Increase counter
+      countSubClasses[currentClassIndex] ++;
+      // If non-leaf class
+      if(subClass.hasSubClass()) {
+        ExtendedIterator<OntClass> iterRootClass = subClass.listSubClasses();
+        while(iterRootClass.hasNext()) {
+          OntClass subSubClass = iterRootClass.next();
+          visit(subSubClass);
+        }
+      }
+      // If leaf class
+      else {
+        countInstances[currentClassIndex] += BaikeStatistics.countArticles(model, "<" + subClass.getURI() + ">");
+      }
+    }
+  }
+  
+  public void printFaster() {
+    // Get root classes
+    String rootClassURI = BaikeUtil.getCategoryURI("Root");
+    OntClass _rootClass  = model.getOntClass(rootClassURI);
+    assert(_rootClass != null);
+    // Iterate classes
+    Statistics st = new Statistics(model);
+    st.visitRoot(_rootClass);
   }
   
   public void print() {
@@ -117,26 +196,26 @@ public class BaikeOntology {
     
     System.out.println();
     
-    // TODO: is this what we want?
-    // Count object properties
-    int countObjectProperties = 0;
-    Iterator<ObjectProperty> iterObjectProperty = model.listObjectProperties();
-    while(iterObjectProperty.hasNext()) {
-      ObjectProperty property = iterObjectProperty.next();
-      BaikeUtil.log(property.toString());
-      countObjectProperties ++;
-    }
-    BaikeUtil.log("# of object properties in model = " + countObjectProperties);
-    // TODO: is this what we want?
-    // Count datatype properties
-    int countDatatypeProperties = 0;
-    Iterator<DatatypeProperty> iterDatatypeProperty = model.listDatatypeProperties();
-    while(iterDatatypeProperty.hasNext()) {
-      DatatypeProperty property = iterDatatypeProperty.next();
-      BaikeUtil.log(property.toString());
-      countDatatypeProperties ++;
-    }
-    BaikeUtil.log("# of datatype properties in model = " + countDatatypeProperties);
+//    // TODO: is this what we want?
+//    // Count object properties
+//    int countObjectProperties = 0;
+//    Iterator<ObjectProperty> iterObjectProperty = model.listObjectProperties();
+//    while(iterObjectProperty.hasNext()) {
+//      ObjectProperty property = iterObjectProperty.next();
+//      BaikeUtil.log(property.toString());
+//      countObjectProperties ++;
+//    }
+//    BaikeUtil.log("# of object properties in model = " + countObjectProperties);
+//    // TODO: is this what we want?
+//    // Count datatype properties
+//    int countDatatypeProperties = 0;
+//    Iterator<DatatypeProperty> iterDatatypeProperty = model.listDatatypeProperties();
+//    while(iterDatatypeProperty.hasNext()) {
+//      DatatypeProperty property = iterDatatypeProperty.next();
+//      BaikeUtil.log(property.toString());
+//      countDatatypeProperties ++;
+//    }
+//    BaikeUtil.log("# of datatype properties in model = " + countDatatypeProperties);
     
     
 //    Iterator<OntClass> ontClasses = model.listHierarchyRootClasses();

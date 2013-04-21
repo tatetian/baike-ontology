@@ -13,6 +13,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.Reasoner;
@@ -89,14 +90,17 @@ public class BaikeStatistics {
   }
   
   public int countArticles() {
+    return countArticles(inf, ROOT_CLASS);
+  }
+  
+  public static int countArticles(Model model, String categoryURI) {
     String queryString = 
         "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
         "SELECT (COUNT(?article) AS ?count) " +
-        "WHERE { ?article rdf:type " + ROOT_CLASS + " }";
-    System.out.println(queryString);
+        "WHERE { ?article rdf:type " + categoryURI + " }";
     Query query = QueryFactory.create(queryString) ;
-    QueryExecution qexec = QueryExecutionFactory.create(query, inf) ;
+    QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
     ResultSet results = qexec.execSelect() ;
     int count = -1;
     for ( ; results.hasNext() ; )

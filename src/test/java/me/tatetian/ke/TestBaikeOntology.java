@@ -18,7 +18,7 @@ public class TestBaikeOntology extends junit.framework.TestCase {
 		
 		BaikeUtil.logMemory();
     BaikeUtil.log("Printing statistics...");
-		bo.print();
+		bo.printFaster();
 		
 		System.out.println();
 		
